@@ -6,24 +6,28 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 const AuthContext = React.createContext();
-export default function useAuth() {
+
+export function useAuth() {
   return useContext(AuthContext);
 }
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const userInfo = useRef();
 
   function signup(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password);
+    createUserWithEmailAndPassword(auth, email, password);
+    return;
   }
+
   function login(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
   }
-  function logOut() {
+
+  function logout() {
     return signOut(auth);
   }
 
@@ -38,9 +42,8 @@ export function AuthProvider({ children }) {
   const value = {
     currentUser,
     login,
-    logOut,
     signup,
-    userInfo,
+    logout,
   };
 
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
